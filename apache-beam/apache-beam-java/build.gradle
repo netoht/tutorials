@@ -1,0 +1,48 @@
+plugins {
+  // id 'idea'     // Uncomment for IntelliJ IDE
+  // id 'eclipse'  // Uncomment for Eclipse IDE
+
+  // Apply java plugin and make it a runnable application.
+  id 'java'
+  id 'application'
+
+  // 'shadow' allows us to embed all the dependencies into a fat jar.
+  id 'com.github.johnrengelman.shadow' version '6.0.0'
+}
+
+// This is the path of the main class, stored within ./src/main/java/
+mainClassName = 'samples.quickstart.WordCount'
+
+// Declare the sources from which to fetch dependencies.
+repositories {
+  mavenCentral()
+  jcenter()
+}
+
+// Java version compatibility.
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+// Use the latest Apache Beam major version 2.
+// You can also lock into a minor version like '2.9.+'.
+ext.apacheBeamVersion = '2.+'
+
+// Declare the dependencies of the project.
+dependencies {
+  shadow "org.apache.beam:beam-sdks-java-core:$apacheBeamVersion"
+
+  runtime "org.apache.beam:beam-runners-direct-java:$apacheBeamVersion"
+  runtime "org.slf4j:slf4j-api:1.+"
+  runtime "org.slf4j:slf4j-jdk14:1.+"
+
+  testCompile "junit:junit:4.+"
+}
+
+// Configure 'shadowJar' instead of 'jar' to set up the fat jar.
+shadowJar {
+  baseName = 'WordCount'  // Name of the fat jar file.
+  classifier = null       // Set to null, otherwise 'shadow' appends a '-all' to the jar file name.
+  manifest {
+    attributes('Main-Class': mainClassName)  // Specify where the main class resides.
+  }
+}
